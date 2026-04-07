@@ -1,7 +1,7 @@
 <?php
 class Database{
     private $host = "localhost";
-    private $dbname = "marrakech-food-lovers";
+    private $dbname = "marrakech_food";
     private $username = "root";
     private $password = '';
     private $conn;
@@ -22,6 +22,9 @@ class Database{
     public static function connect(){
         $db = new self();
         return $db->getConnection();
+        if($db){
+            echo "✅ Connexion réussie à la base de données !<br>";
+        }
     }
 }
 
