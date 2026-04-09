@@ -18,7 +18,7 @@
         <nav class="nav-menu">
             <ul class="nav-list">
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <li><a href="index.php" class="nav-link">Accueil</a></li>
+                    <li><a href="index.php?action=recipes" class="nav-link">Accueil</a></li>
                     <li class="user-controls">
                         <span class="welcome-text">
                             Bienvenue, <strong><?= htmlspecialchars($_SESSION['username']) ?></strong>

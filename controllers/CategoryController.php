@@ -17,17 +17,18 @@ class CategoryController {
         require_once __DIR__ . '/../views/recipes/index.php';
     }
 
-    public function filterByCategory() {
-        $categories = $this->categoryModel->getAllCategories();
+    public function filterByCategory($id) { 
 
-        if (isset($_GET['category_id']) && !empty($_GET['category_id'])) {
-            $category_id = (int) $_GET['category_id'];
-            $recipes = $this->recipeModel->getRecipesByCategory($_SESSION['user_id'],$category_id);
-        } else {
-            $recipes = $this->recipeModel->getAllRecipes();
-        }
+    $categories = $this->categoryModel->getAllCategories();
 
-        require_once __DIR__ . '/../views/recipes/index.php';
+    if ($id && !empty($id)) {
+        $category_id = (int) $id;
+        $recipes = $this->recipeModel->getRecipesByCategory($_SESSION['user_id'], $category_id);
+    } else {
+        $recipes = $this->recipeModel->getRecipesByUser($_SESSION['user_id']);
     }
+
+    require_once __DIR__ . '/../views/recipes/index.php';
+}
 }
 ?>

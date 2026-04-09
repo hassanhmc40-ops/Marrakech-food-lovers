@@ -2,11 +2,11 @@
 
 session_start();
 
-require_once __DIR__ . '/../controllers/AuthController.php';
-require_once __DIR__ . '/../controllers/RecipeController.php';
-require_once __DIR__ . '/../controllers/CategoryController.php';
+require_once __DIR__ . '/controllers/AuthController.php';
+require_once __DIR__ . '/controllers/RecipeController.php';
+require_once __DIR__ . '/controllers/CategoryController.php';
 
-$action = $_GET['action'] ?? 'recipes';
+$action = $_GET['action'] ?? 'login';
 $id = $_GET['id'] ?? null;
 
 $public_actions = ['login', 'register', 'auth_login', 'auth_register'];
@@ -15,6 +15,10 @@ if (!isset($_SESSION['user_id']) && !in_array($action, $public_actions)) {
     // Si pas connecté et action non publique -> Direction Login
     $authController = new AuthController();
     $authController->showLogin();
+    exit();
+}
+if (isset($_SESSION['user_id']) && $action === 'login') {
+    header('Location: index.php?action=recipes');
     exit();
 }
 
@@ -59,25 +63,29 @@ switch ($action) {
         $controller = new RecipeController();
         $controller->store();
         break;
+    case 'showRecipe':
+    $controller = new RecipeController();
+    $controller->show($id); 
+    break;
 
     case 'editRecipe':
         $controller = new RecipeController();
-        $controller->edit();
+        $controller->edit($id);
         break;
 
     case 'updateRecipe':
         $controller = new RecipeController();
-        $controller->update();
+        $controller->update($id);
         break;
 
     case 'deleteRecipe':
         $controller = new RecipeController();
-        $controller->delete();
+        $controller->delete($id);
         break;
 
     case 'filterByCategory':
         $controller = new CategoryController();
-        $controller->filterByCategory();
+        $controller->filterByCategory($id);
         break;
 
     default:

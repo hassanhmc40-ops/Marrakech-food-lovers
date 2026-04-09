@@ -80,12 +80,17 @@ class Recipe {
         return $stmt->execute();
     }
 
-    public function getRecipesByCategory($category_id) {
-        $query = "SELECT * FROM " . $this->table . " WHERE category_id = :category_id ORDER BY created_at DESC";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":category_id", $category_id);
-        $stmt->execute();
-        return $stmt->fetchAll();
-    }
+    public function getRecipesByCategory($user_id, $category_id) {
+    $query = "SELECT * FROM " . $this->table . " 
+              WHERE user_id = :user_id AND category_id = :category_id 
+              ORDER BY created_at DESC";
+    
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(":user_id", $user_id);
+    $stmt->bindParam(":category_id", $category_id);
+    $stmt->execute();
+    
+    return $stmt->fetchAll();
+}
 }
 ?>

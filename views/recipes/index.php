@@ -12,8 +12,8 @@
     <a href="index.php?action=recipes">All</a>
 
     <?php foreach ($categories as $category): ?>
-        <a href="index.php?action=filterByCategory&category_id=<?= $category['id']; ?>">
-            <?= htmlspecialchars($category['name']); ?>
+        <a href="index.php?action=filterByCategory&id=<?= $category['id']; ?>">
+        <?= htmlspecialchars($category['name']); ?>
         </a>
     <?php endforeach; ?>
 </div>

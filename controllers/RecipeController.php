@@ -37,7 +37,7 @@ class RecipeController {
     
    public function store() {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (session_status() === PHP_SESSION_NONE){ session_start();}
+        
         
         $user_id = $_SESSION['user_id'];
         

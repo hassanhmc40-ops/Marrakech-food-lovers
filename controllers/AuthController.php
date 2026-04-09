@@ -58,17 +58,17 @@ class AuthController {
             $user = $this->userModel->login($email, $password);
 
             if ($user) {
-                if (session_status() === PHP_SESSION_NONE) session_start();
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
+            
+            if (session_status() === PHP_SESSION_NONE) session_start();
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
 
-                header('Location: index.php');
-                exit();
-            } else {
-                $error = "Email ou mot de passe incorrect.";
-                // CORRECTION DU CHEMIN ICI : Ajout de __DIR__
-                include __DIR__ . '/../views/auth/login.php';
-            }
+            header('Location: index.php?action=recipes');
+            exit(); 
+        } else {
+            $error = "Email ou mot de passe incorrect.";
+            include __DIR__ . '/../views/auth/login.php';
+        }
         }  
     }
 
