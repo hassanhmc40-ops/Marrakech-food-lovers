@@ -22,7 +22,7 @@ class CategoryController {
 
         if (isset($_GET['category_id']) && !empty($_GET['category_id'])) {
             $category_id = (int) $_GET['category_id'];
-            $recipes = $this->recipeModel->getRecipesByCategory($category_id);
+            $recipes = $this->recipeModel->getRecipesByCategory($_SESSION['user_id'],$category_id);
         } else {
             $recipes = $this->recipeModel->getAllRecipes();
         }

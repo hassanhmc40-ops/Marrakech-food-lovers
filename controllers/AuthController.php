@@ -8,16 +8,29 @@ class AuthController {
         $this->userModel = new User();
     }
 
+    public function showLogin() {
+        // Ajout d'une variable $error vide pour éviter les notices dans la vue
+        $error = null;
+        include __DIR__ . '/../views/auth/login.php';
+    }
+
+    public function showRegister() {
+        $error = null;
+        include __DIR__ . '/../views/auth/register.php';
+    }
+
     public function register() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = $_POST['username'];
-            $email = $_POST['email'];
-            $password = $_POST['password'];
-            $password_confirm = $_POST['password_confirm'];
+            $username = $_POST['username'] ?? '';
+            $email = $_POST['email'] ?? '';
+            $password = $_POST['password'] ?? '';
+            
+        
+            $password_confirm = $_POST['confirm_password'] ?? '';
 
             $success = false;
             
-             if (empty($username) || empty($email) || empty($password)) {
+            if (empty($username) || empty($email) || empty($password)) {
                 $error = "Tous les champs obligatoires ne sont pas remplis.";
             } elseif ($password !== $password_confirm) {
                 $error = "Les deux mots de passe sont différents.";
@@ -27,24 +40,25 @@ class AuthController {
                 $success = $this->userModel->register($username, $email, $password);
             }
 
-            if ($success){
-                header('Location: login.php?msg=account_created');
+            if ($success) {
+                header('Location: index.php?action=login&msg=account_created');
                 exit();
             } else {
-                include 'views/register.php';
+                // CORRECTION DU CHEMIN ICI : Ajout de __DIR__
+                include __DIR__ . '/../views/auth/register.php';
             }   
         }     
-     
     }
+
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $_POST['email'];
-            $password = $_POST['password'];
+            $email = $_POST['email'] ?? '';
+            $password = $_POST['password'] ?? '';
 
             $user = $this->userModel->login($email, $password);
 
             if ($user) {
-                session_start();
+                if (session_status() === PHP_SESSION_NONE) session_start();
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
 
@@ -52,18 +66,16 @@ class AuthController {
                 exit();
             } else {
                 $error = "Email ou mot de passe incorrect.";
-                include 'views/login.php';
+                // CORRECTION DU CHEMIN ICI : Ajout de __DIR__
+                include __DIR__ . '/../views/auth/login.php';
             }
-    
         }  
-    }    
+    }
+
     public function logout() {
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) session_start();
         session_destroy();
-        header('Location: login.php');
+        header('Location: index.php?action=login');
         exit();
     }      
 }
-
-
-?>
