@@ -19,6 +19,11 @@ class RecipeController {
         include __DIR__ . '/../views/recipes/index.php';
     }
 
+    public function create() {
+        $categoryModel = new Category();
+        $categories = $categoryModel->getAllCategories();
+        include __DIR__ . '/../views/recipes/create.php';
+    }
  
     public function show($id) {
         $recipe = $this->recipeModel->getRecipeById($id);
@@ -32,7 +37,7 @@ class RecipeController {
     
    public function store() {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (session_status() === PHP_SESSION_NONE){ session_start();}
         
         $user_id = $_SESSION['user_id'];
         
@@ -75,9 +80,11 @@ class RecipeController {
 }
     
     public function edit($id) {
-        session_start();
+         if (session_status() === PHP_SESSION_NONE){ session_start();}
         $recipe = $this->recipeModel->getRecipeById($id);
 
+        $categoryModel = new Category();
+        $categories = $categoryModel->getAllCategories();
 
         if ($recipe && $recipe['user_id'] == $_SESSION['user_id']) {
             include __DIR__ . '/../views/recipes/edit.php';
@@ -90,7 +97,7 @@ class RecipeController {
     
     public function update($id) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            session_start();
+             if (session_status() === PHP_SESSION_NONE){ session_start();}
             $recipe = $this->recipeModel->getRecipeById($id);
 
 
@@ -102,7 +109,14 @@ class RecipeController {
                 $prep_time = $_POST['prep_time'];
                 $servings = $_POST['servings'];
 
-                $success = $this->recipeModel->updateRecipe( 
+               
+
+                if (empty($title) || empty($ingredients) || empty($instructions)) {
+                    $error = "Les champs ne peuvent pas être vides lors de la modification.";
+                    include __DIR__ . '/../views/recipes/edit.php';
+                    return;
+                }
+                 $success = $this->recipeModel->updateRecipe( 
                     $id,
                     $category_id, 
                     $title,
@@ -111,12 +125,6 @@ class RecipeController {
                     $prep_time,
                     $servings
                 );
-
-                if (empty($title) || empty($ingredients) || empty($instructions)) {
-                    $error = "Les champs ne peuvent pas être vides lors de la modification.";
-                    include __DIR__ . '/../views/recipes/edit.php';
-                    return;
-                }
 
                 if ($success) {
                     header('Location: index.php?msg=updated');
@@ -132,6 +140,7 @@ class RecipeController {
     }
     
     public function delete($id) {
+        if (session_status() === PHP_SESSION_NONE){ session_start();}
         session_start();
         $recipe = $this->recipeModel->getRecipeById($id);
 

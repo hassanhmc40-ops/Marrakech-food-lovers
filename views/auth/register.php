@@ -1,5 +1,10 @@
 <?php require_once __DIR__ . '/../layout/header.php'; ?>
 
+<?php if (isset($error)): ?>
+    <div style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 10px;">
+        <?php echo $error; ?>
+    </div>
+<?php endif; ?>
 <h2>Create Account</h2>
 
 <form action="index.php?action=register" method="POST">
