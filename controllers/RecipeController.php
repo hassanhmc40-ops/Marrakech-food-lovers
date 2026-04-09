@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../models/Recipe.php';
+require_once __DIR__ . '/../models/Category.php';
 
 class RecipeController {
     private $recipeModel;
@@ -11,6 +12,10 @@ class RecipeController {
     
     public function index() {
         $recipes = $this->recipeModel->getAllRecipes();
+
+        $categoryModel = new Category();
+        $categories = $categoryModel->getAllCategories();
+
         include __DIR__ . '/../views/recipes/index.php';
     }
 
@@ -25,46 +30,49 @@ class RecipeController {
     }
 
     
-    public function store() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            session_start();
-            
-            
-            $user_id = $_SESSION['user_id'];
-            
-            $data = [
-                'category_id'  => $_POST['category_id'],
-                'title'        => $_POST['title'],
-                'ingredients'  => $_POST['ingredients'],
-                'instructions' => $_POST['instructions'],
-                'prep_time'    => $_POST['prep_time'],
-                'servings'     => $_POST['servings']
-            ];
+   public function store() {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        $user_id = $_SESSION['user_id'];
+        
+        // Extraction des données pour faciliter la vérification
+        $category_id  = $_POST['category_id'] ?? '';
+        $title        = $_POST['title'] ?? '';
+        $ingredients  = $_POST['ingredients'] ?? '';
+        $instructions = $_POST['instructions'] ?? '';
+        $prep_time    = $_POST['prep_time'] ?? 0;
+        $servings     = $_POST['servings'] ?? 0;
 
-            $success = $this->recipeModel->createRecipe(
-                $user_id, 
-                $data['category_id'], 
-                $data['title'], 
-                $data['ingredients'], 
-                $data['instructions'], 
-                $data['prep_time'], 
-                $data['servings']
-            );
-            if (empty($title) || empty($ingredients) || empty($instructions) || empty($category_id)) {
-                $error = "Veuillez remplir tous les champs obligatoires";
-                include __DIR__ . '/../views/recipes/create.php';
-                return;
-            }
+        // VERIFICATION : On utilise les variables qu'on vient de créer
+        if (empty($title) || empty($ingredients) || empty($instructions) || empty($category_id)) {
+            $error = "Veuillez remplir tous les champs obligatoires";
+            // Important : on doit aussi récupérer les catégories pour le formulaire de création
+            $categoryModel = new Category();
+            $categories = $categoryModel->getAllCategories();
+            include __DIR__ . '/../views/recipes/create.php';
+            return;
+        }
 
-            if ($success) {
-                header('Location: index.php?msg=recipe_added');
-                exit();
-            } else {
-                $error = "Impossible d'ajouter la recette.";
-                include __DIR__ . '/../views/recipes/create.php';
-            }
+        $success = $this->recipeModel->createRecipe(
+            $user_id, 
+            $category_id, 
+            $title, 
+            $ingredients, 
+            $instructions, 
+            $prep_time, 
+            $servings
+        );
+
+        if ($success) {
+            header('Location: index.php?msg=recipe_added');
+            exit();
+        } else {
+            $error = "Impossible d'ajouter la recette.";
+            include __DIR__ . '/../views/recipes/create.php';
         }
     }
+}
     
     public function edit($id) {
         session_start();
