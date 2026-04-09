@@ -2,11 +2,11 @@
 
 session_start();
 
-require_once __DIR__ . '/../controllers/AuthController.php';
-require_once __DIR__ . '/../controllers/RecipeController.php';
-require_once __DIR__ . '/../controllers/CategoryController.php';
+require_once __DIR__ . '/controllers/AuthController.php';
+require_once __DIR__ . '/controllers/RecipeController.php';
+require_once __DIR__ . '/controllers/CategoryController.php';
 
-$action = $_GET['action'] ?? 'recipes';
+$action = $_GET['action'] ?? 'login';
 $id = $_GET['id'] ?? null;
 
 $public_actions = ['login', 'register', 'auth_login', 'auth_register'];

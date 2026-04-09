@@ -62,7 +62,7 @@ class AuthController {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
 
-                header('Location: index.php');
+                header('Location: index.php?action=recipes');
                 exit();
             } else {
                 $error = "Email ou mot de passe incorrect.";

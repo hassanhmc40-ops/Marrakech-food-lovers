@@ -30,7 +30,7 @@ class RecipeController {
         if ($recipe) {
             include __DIR__ . '/../views/recipes/show.php';
         } else {
-            header('Location: index.php?error=not_found');
+            header('Location: index.php?action=recipes&error=not_found');
         }
     }
 
