@@ -1,4 +1,10 @@
 <?php require_once __DIR__ . '/../layout/header.php'; ?>
+<?php if (isset($_SESSION['error'])): ?>
+    <div class="alert alert-danger border-0 rounded-0 shadow-sm mb-4 d-flex align-items-center" role="alert">
+        <i class="bi bi-exclamation-circle-fill me-2"></i>
+        <div><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+    </div>
+<?php endif; ?>
 
 <div class="row justify-content-center">
     <div class="col-lg-8">

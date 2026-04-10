@@ -23,6 +23,8 @@ if (isset($_SESSION['user_id']) && $action === 'login') {
     exit();
 }
 
+$recipeController = new RecipeController(); // On l'instancie une fois pour gagner en clarté
+
 switch ($action) {
     // --- AUTHENTICATION ---
     case 'login':
@@ -41,43 +43,47 @@ switch ($action) {
 
     // --- RECIPE MANAGEMENT ---
     case 'recipes':
-    case 'myRecipes': // Added to handle the first tab
-        $controller = new RecipeController();
-        $controller->index();
+    case 'myRecipes':
+        $recipeController->index();
         break;
 
-    case 'myFavorites': // Added for the Favorites tab
-        $controller = new RecipeController();
-        $controller->showFavorites(); // You need to create this method in RecipeController
+    // --- FAVORITES (CORRECTION ICI) ---
+    case 'toggleFavorite':
+        if ($id) {
+            $recipeController->toggleFavorite($id);
+        }
         break;
 
-    case 'search': // Added for the search bar
-        $controller = new RecipeController();
-        $controller->search(); // You need to create this method in RecipeController
+    case 'myFavorites':
+        $recipeController->showFavorites();
+        break;
+
+    case 'search':
+        $recipeController->search();
         break;
 
     case 'createRecipe':
-        (new RecipeController())->create();
+        $recipeController->create();
         break;
 
     case 'storeRecipe':
-        (new RecipeController())->store();
+        $recipeController->store();
         break;
 
     case 'showRecipe':
-        (new RecipeController())->show($id); 
+        $recipeController->show($id); 
         break;
 
     case 'editRecipe':
-        (new RecipeController())->edit($id);
+        $recipeController->edit($id);
         break;
 
     case 'updateRecipe':
-        (new RecipeController())->update($id);
+        $recipeController->update($id);
         break;
 
     case 'deleteRecipe':
-        (new RecipeController())->delete($id);
+        $recipeController->delete($id);
         break;
 
     // --- CATEGORIES & EXPLORE ---
@@ -86,10 +92,10 @@ switch ($action) {
         break;
 
     case 'explore':
-        (new RecipeController())->explore();
+        $recipeController->explore();
         break;
 
     default:
-        http_response_code(440);
+        http_response_code(404); // Correction : 404 est le code standard pour Not Found
         echo "Page not found.";
 }

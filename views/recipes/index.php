@@ -10,14 +10,17 @@
                     <span class="badge bg-light text-dark rounded-pill"><?= count($recipes) ?></span>
                 </a>
                 <?php foreach($categories as $cat): ?>
-                <a href="index.php?action=filterByCategory&id=<?= $cat['id'] ?>" class="collection-item rounded">
-                    <?= $cat['name'] ?>
+                <a href="index.php?action=filterByCategory&id=<?= $cat['id'] ?>" class="collection-item rounded <?= (isset($_GET['id']) && $_GET['id'] == $cat['id']) ? 'active' : '' ?>">
+                    <?= htmlspecialchars($cat['name']) ?>
                 </a>
                 <?php endforeach; ?>
+                <a href="index.php?action=myFavorites" class="collection-item rounded mt-2 border-top pt-2">
+                    <span class="text-danger"><i class="bi bi-heart-fill me-2"></i>Favorites</span>
+                </a>
             </div>
         </div>
         
-        <div class="p-4 bg-white shadow-sm italic text-muted small border-start border-4 border-warning">
+        <div class="p-4 bg-white shadow-sm italic text-muted small border-start border-4 border-gold">
             "Cuisine is the bridge between history and the senses."
         </div>
     </div>
@@ -35,7 +38,7 @@
 
         <div class="table-responsive bg-white shadow-sm p-4">
             <table class="table table-hover align-middle">
-                <thead class="text-uppercase small text-muted">
+                <thead class="text-uppercase small text-muted border-bottom">
                     <tr>
                         <th>Title</th>
                         <th>Prep Time</th>
@@ -47,19 +50,26 @@
                     <?php foreach($recipes as $recipe): ?>
                     <tr>
                         <td>
-                            <div class="fw-bold"><?= $recipe['title'] ?></div>
-                            <div class="small text-muted">Published on <?= date('M d, Y', strtotime($recipe['created_at'])) ?></div>
+                            <div class="fw-bold">
+                                <?php if ($this->recipeModel->isFavorite($_SESSION['user_id'], $recipe['id'])): ?>
+                                    <i class="bi bi-star-fill text-warning me-1 small"></i>
+                                <?php endif; ?>
+                                <?= htmlspecialchars($recipe['title']) ?>
+                            </div>
+                            <div class="small text-muted">Archived on <?= date('M d, Y', strtotime($recipe['created_at'])) ?></div>
                         </td>
-                        <td><?= $recipe['prep_time'] ?> min</td>
-                        <td><span class="badge-category"><?= $recipe['category_name'] ?></span></td>
+                        <td><i class="bi bi-hourglass-split me-1"></i> <?= $recipe['prep_time'] ?> min</td>
+                        <td><span class="badge-category"><?= htmlspecialchars($recipe['category_name']) ?></span></td>
                         <td class="text-end">
                             <div class="dropdown">
-                                <button class="btn btn-link text-dark p-0" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></button>
-                                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm">
-                                    <li><a class="dropdown-item" href="index.php?action=showRecipe&id=<?= $recipe['id'] ?>"><i class="bi bi-eye me-2"></i> Show</a></li>
-                                    <li><a class="dropdown-item" href="index.php?action=editRecipe&id=<?= $recipe['id'] ?>"><i class="bi bi-pencil me-2"></i> Edit</a></li>
+                                <button class="btn btn-link text-dark p-0" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm p-2">
+                                    <li><a class="dropdown-item rounded" href="index.php?action=showRecipe&id=<?= $recipe['id'] ?>"><i class="bi bi-eye me-2"></i> Show</a></li>
+                                    <li><a class="dropdown-item rounded" href="index.php?action=editRecipe&id=<?= $recipe['id'] ?>"><i class="bi bi-pencil me-2"></i> Edit</a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="index.php?action=deleteRecipe&id=<?= $recipe['id'] ?>" onclick="return confirm('Archive this recipe?')"><i class="bi bi-trash me-2"></i> Delete</a></li>
+                                    <li><a class="dropdown-item text-danger rounded" href="index.php?action=deleteRecipe&id=<?= $recipe['id'] ?>" onclick="return confirm('Permanently remove from archive?')"><i class="bi bi-trash me-2"></i> Delete</a></li>
                                 </ul>
                             </div>
                         </td>
@@ -67,6 +77,9 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            <?php if (empty($recipes)): ?>
+                <div class="text-center py-5 text-muted italic">No manuscripts found in this collection.</div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

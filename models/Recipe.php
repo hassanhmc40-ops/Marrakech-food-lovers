@@ -180,11 +180,31 @@ class Recipe {
         return $stmt->execute([':u' => $user_id, ':r' => $recipe_id]);
     }
 
+    public function toggleFavorite($user_id, $recipe_id) {
+        // Correction : Utilisation de $this->conn au lieu de $this->db
+        $query = "SELECT id FROM favorites WHERE user_id = :user_id AND recipe_id = :recipe_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute(['user_id' => $user_id, 'recipe_id' => $recipe_id]);
+        
+        if ($stmt->fetch()) {
+            // Unfavorite
+            $query = "DELETE FROM favorites WHERE user_id = :user_id AND recipe_id = :recipe_id";
+        } else {
+            // Favorite
+            $query = "INSERT INTO favorites (user_id, recipe_id) VALUES (:user_id, :recipe_id)";
+        }
+        
+        return $this->conn->prepare($query)->execute([
+            'user_id' => $user_id,
+            'recipe_id' => $recipe_id
+        ]);
+    }
+
     /**
-     * Get all recipes favorited by a specific user.
-     * Useful for the "My Favorites" page.
+     * Récupérer les recettes favorites d'un utilisateur avec les détails
      */
     public function getUserFavorites($user_id) {
+        // Jointure pour récupérer le nom de la catégorie et l'auteur
         $query = "SELECT r.*, c.name as category_name, u.username 
                   FROM favorites f
                   JOIN recipes r ON f.recipe_id = r.id
@@ -194,15 +214,12 @@ class Recipe {
                   ORDER BY f.created_at DESC";
                   
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":user_id", $user_id);
-        $stmt->execute();
-        
-        return $stmt->fetchAll();
+        $stmt->execute(['user_id' => $user_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
-     * Check if a specific recipe is favorited by a user.
-     * Used to toggle the heart icon color in the view.
+     * Vérifier si une recette est déjà en favori (pour l'icône)
      */
     public function isFavorite($user_id, $recipe_id) {
         $query = "SELECT COUNT(*) FROM favorites WHERE user_id = :u AND recipe_id = :r";
@@ -210,5 +227,4 @@ class Recipe {
         $stmt->execute([':u' => $user_id, ':r' => $recipe_id]);
         return $stmt->fetchColumn() > 0;
     }
-    
 }
