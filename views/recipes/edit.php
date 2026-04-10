@@ -1,61 +1,60 @@
 <?php require_once __DIR__ . '/../layout/header.php'; ?>
 
-<div class="auth-container">
-    <div class="auth-card">
-        <h2 class="brand-gold text-center mb-4">MODIFIER LA RECETTE</h2>
-
-        <?php if (isset($error)): ?>
-            <div class="alert-error"><?= $error ?></div>
-        <?php endif; ?>
-
-<form action="index.php?action=updateRecipe&id=<?= $recipe['id'] ?>" method="POST">            
-            <div class="form-group mb-3">
-                <label for="title" class="text-light">Titre de la recette</label>
-                <input type="text" name="title" id="title" class="custom-input w-100" 
-                       value="<?= htmlspecialchars($recipe['title']) ?>" required>
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-end mb-5 border-bottom pb-4">
+            <div>
+                <h1 class="brand-font display-4">Edit Manuscript</h1>
+                <p class="text-muted text-uppercase small">Modify your culinary entry</p>
             </div>
+            <a href="index.php?action=recipes" class="btn btn-outline-dark rounded-0 px-4">Cancel</a>
+        </div>
 
-            <div class="row-flex mb-3">
-                <div class="flex-item">
-                    <label for="prep_time" class="text-light">Temps (min)</label>
-                    <input type="number" name="prep_time" id="prep_time" class="custom-input w-100" 
-                           value="<?= htmlspecialchars($recipe['prep_time']) ?>">
+        <form action="index.php?action=updateRecipe&id=<?= $recipe['id'] ?>" method="POST" class="bg-white p-5 shadow-sm">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <label class="form-label small fw-bold text-uppercase text-muted">Title</label>
+                    <input type="text" name="title" class="form-control form-control-lg rounded-0 border-0 border-bottom px-0" 
+                           value="<?= htmlspecialchars($recipe['title']) ?>" required>
                 </div>
-                <div class="flex-item">
-                    <label for="servings" class="text-light">Personnes</label>
-                    <input type="number" name="servings" id="servings" class="custom-input w-100" 
-                           value="<?= htmlspecialchars($recipe['servings']) ?>">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-uppercase text-muted">Category</label>
+                    <select name="category_id" class="form-select rounded-0 border-0 border-bottom px-0" required>
+                        <?php foreach($categories as $cat): ?>
+                            <option value="<?= $cat['id'] ?>" <?= ($cat['id'] == $recipe['category_id']) ? 'selected' : '' ?>>
+                                <?= $cat['name'] ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
             </div>
 
-            <div class="form-group mb-3">
-                <label for="ingredients" class="text-light">Ingrédients</label>
-                <textarea name="ingredients" id="ingredients" class="custom-input w-100" rows="5" required><?= htmlspecialchars($recipe['ingredients']) ?></textarea>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold text-uppercase text-muted">Prep Time (min)</label>
+                    <input type="number" name="prep_time" class="form-control rounded-0 border-0 border-bottom px-0" 
+                           value="<?= $recipe['prep_time'] ?>">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold text-uppercase text-muted">Servings</label>
+                    <input type="number" name="servings" class="form-control rounded-0 border-0 border-bottom px-0" 
+                           value="<?= $recipe['servings'] ?>">
+                </div>
             </div>
 
-            <div class="form-group mb-4">
-                <label for="instructions" class="text-light">Instructions de préparation</label>
-                <textarea name="instructions" id="instructions" class="custom-input w-100" rows="5" required><?= htmlspecialchars($recipe['instructions']) ?></textarea>
+            <div class="mb-4">
+                <label class="form-label small fw-bold text-uppercase text-muted">Ingredients</label>
+                <textarea name="ingredients" class="form-control rounded-0 border-1 p-3" rows="5"><?= htmlspecialchars($recipe['ingredients']) ?></textarea>
             </div>
-            <div class="form-group mb-3">
-    <label for="category_id" class="text-light">Catégorie</label>
-    <select name="category_id" id="category_id" class="custom-input w-100" required>
-        <option value="">-- Choisir une catégorie --</option>
-        <?php foreach ($categories as $category): ?>
-            <option value="<?= $category['id']; ?>" 
-                <?= ($category['id'] == $recipe['category_id']) ? 'selected' : ''; ?>>
-                <?= htmlspecialchars($category['name']); ?>
-            </option>
-        <?php endforeach; ?>
-    </select>
-</div>
 
-           <div class="actions-group">
-           <button type="submit" class="btn-gold w-100">ENREGISTRER LES MODIFICATIONS</button>
-        
-           <a href="index.php?action=recipes" class="btn-cancel d-block text-center mt-3">Annuler</a>   
-          </div>
+            <div class="mb-5">
+                <label class="form-label small fw-bold text-uppercase text-muted">Instructions</label>
+                <textarea name="instructions" class="form-control rounded-0 border-1 p-3" rows="8"><?= htmlspecialchars($recipe['instructions']) ?></textarea>
+            </div>
 
+            <div class="text-end">
+                <button type="submit" class="btn btn-gold btn-lg px-5 shadow-sm">Update Entry</button>
+            </div>
         </form>
     </div>
 </div>
