@@ -88,6 +88,11 @@ switch ($action) {
         $controller->filterByCategory($id);
         break;
 
+    case 'explore':
+    $controller = new RecipeController(); 
+    $controller->explore();
+    break;
+
     default:
         echo "Page not found.";
 }

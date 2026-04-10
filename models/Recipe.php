@@ -9,29 +9,86 @@ class Recipe {
         $this->conn = Database::connect();
     }
 
+    /**
+     * Retrieve all recipes with category and author details.
+     * Useful for administrative purposes or global statistics.
+     */
     public function getAllRecipes() {
-        $query = "SELECT * FROM " . $this->table . " ORDER BY created_at DESC";
+        $query = "SELECT r.*, c.name as category_name, u.username 
+                  FROM " . $this->table . " r
+                  LEFT JOIN categories c ON r.category_id = c.id
+                  LEFT JOIN users u ON r.user_id = u.id
+                  ORDER BY r.created_at DESC";
+                  
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
+    /**
+     * Retrieve recipes from other users only.
+     * Used for the community "Explore" feed.
+     */
+    public function getOthersRecipes($current_user_id) {
+        $query = "SELECT r.*, c.name as category_name, u.username 
+                  FROM " . $this->table . " r
+                  LEFT JOIN categories c ON r.category_id = c.id
+                  LEFT JOIN users u ON r.user_id = u.id
+                  WHERE r.user_id != :user_id
+                  ORDER BY r.created_at DESC";
+                  
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":user_id", $current_user_id);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    // Get details for a specific recipe by its ID.
     public function getRecipeById($id) {
-        $query = "SELECT * FROM " . $this->table . " WHERE id = :id";
+        $query = "SELECT r.*, c.name as category_name, u.username
+                  FROM " . $this->table . " r
+                  LEFT JOIN categories c ON r.category_id = c.id
+                  LEFT JOIN users u ON r.user_id = u.id
+                  WHERE r.id = :id";
+                  
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":id", $id);
         $stmt->execute();
         return $stmt->fetch();
     }
 
+    // Retrieve all recipes belonging to the logged-in user.
     public function getRecipesByUser($user_id) {
-        $query = "SELECT * FROM " . $this->table . " WHERE user_id = :user_id ORDER BY created_at DESC";
+        $query = "SELECT r.*, c.name as category_name 
+                  FROM " . $this->table . " r 
+                  LEFT JOIN categories c ON r.category_id = c.id
+                  WHERE r.user_id = :user_id 
+                  ORDER BY r.created_at DESC";
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":user_id", $user_id);
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
+    // Filter the logged-in user's recipes by a specific category.
+
+    public function getRecipesByCategory($user_id, $category_id) {
+        $query = "SELECT r.*, c.name as category_name 
+                  FROM " . $this->table . " r 
+                  LEFT JOIN categories c ON r.category_id = c.id
+                  WHERE r.user_id = :user_id AND r.category_id = :category_id 
+                  ORDER BY r.created_at DESC";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":user_id", $user_id);
+        $stmt->bindParam(":category_id", $category_id);
+        $stmt->execute();
+        
+        return $stmt->fetchAll();
+    }
+
+    // Create and store a new recipe in the database.
     public function createRecipe($user_id, $category_id, $title, $ingredients, $instructions, $prep_time, $servings) {
         $query = "INSERT INTO " . $this->table . " 
                   (user_id, category_id, title, ingredients, instructions, prep_time, servings) 
@@ -50,6 +107,7 @@ class Recipe {
         return $stmt->execute();
     }
 
+    // Update an existing recipe's information.
     public function updateRecipe($id, $category_id, $title, $ingredients, $instructions, $prep_time, $servings) {
         $query = "UPDATE " . $this->table . " 
                   SET category_id = :category_id,
@@ -73,24 +131,12 @@ class Recipe {
         return $stmt->execute();
     }
 
+    // Permanently delete a recipe from the database.
     public function deleteRecipe($id) {
         $query = "DELETE FROM " . $this->table . " WHERE id = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":id", $id);
         return $stmt->execute();
     }
-
-    public function getRecipesByCategory($user_id, $category_id) {
-    $query = "SELECT * FROM " . $this->table . " 
-              WHERE user_id = :user_id AND category_id = :category_id 
-              ORDER BY created_at DESC";
     
-    $stmt = $this->conn->prepare($query);
-    $stmt->bindParam(":user_id", $user_id);
-    $stmt->bindParam(":category_id", $category_id);
-    $stmt->execute();
-    
-    return $stmt->fetchAll();
 }
-}
-?>
