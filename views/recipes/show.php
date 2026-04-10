@@ -1,60 +1,57 @@
-<?php require_once __DIR__ . '/../layout/header.php'; ?>
+<?php include __DIR__ . '/../layout/header.php'; ?>
 
-<div class="row justify-content-center">
-    <div class="col-lg-10">
-        <div class="text-center mb-5">
-            <span class="badge-category mb-3 d-inline-block"><?= htmlspecialchars($recipe['category_name']) ?></span>
-            <h1 class="brand-font display-3 mb-3"><?= htmlspecialchars($recipe['title']) ?></h1>
-            <p class="text-muted text-uppercase small ls-2">Curated by <?= htmlspecialchars($recipe['username'] ?? $_SESSION['username']) ?></p>
-            
-            <div class="d-flex justify-content-center gap-4 mt-4 border-top border-bottom py-3">
-                <div class="text-center">
-                    <span class="d-block small text-muted text-uppercase">Prep Time</span>
-                    <span class="fw-bold"><?= $recipe['prep_time'] ?> min</span>
+<div class="container py-5">
+    <div class="mb-4">
+        <a href="index.php?action=recipes" class="text-muted text-decoration-none small">
+            <i class="bi bi-arrow-left me-1"></i> BACK TO ARCHIVE
+        </a>
+    </div>
+
+    <div class="row g-5">
+        <div class="col-md-4">
+            <div class="p-4 bg-white shadow-sm border-top border-4 border-gold">
+                <span class="badge-category mb-3 d-inline-block"><?= htmlspecialchars($recipe['category_name']) ?></span>
+                <h1 class="brand-font mb-4"><?= htmlspecialchars($recipe['title']) ?></h1>
+                
+                <div class="recipe-meta mb-4">
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <span class="text-muted small">Prep Time</span>
+                        <span class="fw-bold"><?= $recipe['prep_time'] ?> min</span>
+                    </div>
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <span class="text-muted small">Servings</span>
+                        <span class="fw-bold"><?= $recipe['servings'] ?> pers</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2">
+                        <span class="text-muted small">Curated by</span>
+                        <span class="fw-bold">@<?= htmlspecialchars($recipe['username'] ?? 'Chef') ?></span>
+                    </div>
                 </div>
-                <div class="vr"></div>
-                <div class="text-center">
-                    <span class="d-block small text-muted text-uppercase">Servings</span>
-                    <span class="fw-bold"><?= $recipe['servings'] ?> pers</span>
-                </div>
-                <div class="vr"></div>
-                <div class="text-center">
-                    <span class="d-block small text-muted text-uppercase">Date</span>
-                    <span class="fw-bold"><?= date('d.m.Y', strtotime($recipe['created_at'])) ?></span>
-                </div>
+
+                <a href="index.php?action=editRecipe&id=<?= $recipe['id'] ?>" class="btn btn-outline-dark w-100 rounded-0 mb-2">
+                    Edit Manuscript
+                </a>
             </div>
         </div>
 
-        <div class="row g-5">
-            <div class="col-md-4">
-                <div class="p-4 bg-white shadow-sm border-top border-gold border-3">
-                    <h4 class="brand-font mb-4">Ingredients</h4>
+        <div class="col-md-8">
+            <div class="bg-white p-5 shadow-sm">
+                <section class="mb-5">
+                    <h5 class="text-uppercase ls-2 mb-4 border-bottom pb-2">Ingredients</h5>
                     <div class="lh-lg" style="white-space: pre-line;">
                         <?= htmlspecialchars($recipe['ingredients']) ?>
                     </div>
-                </div>
-                
-                <?php if($recipe['user_id'] == $_SESSION['user_id']): ?>
-                <div class="mt-4 d-grid gap-2">
-                    <a href="index.php?action=editRecipe&id=<?= $recipe['id'] ?>" class="btn btn-outline-dark rounded-0">Edit Manuscript</a>
-                </div>
-                <?php endif; ?>
-            </div>
+                </section>
 
-            <div class="col-md-8">
-                <h4 class="brand-font mb-4">Instructions</h4>
-                <div class="lh-lg fs-5 text-secondary" style="white-space: pre-line;">
-                    <?= htmlspecialchars($recipe['instructions']) ?>
-                </div>
-                
-                <div class="mt-5 pt-5 border-top">
-                    <a href="index.php?action=recipes" class="text-dark text-decoration-none small text-uppercase fw-bold">
-                        <i class="bi bi-arrow-left me-2"></i> Back to Archive
-                    </a>
-                </div>
+                <section>
+                    <h5 class="text-uppercase ls-2 mb-4 border-bottom pb-2">Instructions</h5>
+                    <div class="lh-lg" style="white-space: pre-line;">
+                        <?= htmlspecialchars($recipe['instructions']) ?>
+                    </div>
+                </section>
             </div>
         </div>
     </div>
 </div>
 
-<?php require_once __DIR__ . '/../layout/footer.php'; ?>
+<?php include __DIR__ . '/../layout/footer.php'; ?>
