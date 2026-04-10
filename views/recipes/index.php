@@ -1,81 +1,74 @@
-<?php require_once __DIR__ . '/../layout/header.php'; ?>
+<?php include __DIR__ . '/../layout/header.php'; ?>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="brand-font">My Collection</h1>
-    <a href="index.php?action=createRecipe" class="btn btn-gold">+ Add Recipe</a>
-</div>
-
-<ul class="nav nav-tabs mb-4 border-gold">
-    <li class="nav-item">
-        <a class="nav-link <?= (!isset($_GET['action']) || $_GET['action'] == 'myRecipes') ? 'active bg-gold text-white' : 'text-dark' ?>" 
-           href="index.php?action=myRecipes">My Recipes</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link <?= (isset($_GET['action']) && $_GET['action'] == 'myFavorites') ? 'active bg-gold text-white' : 'text-dark' ?>" 
-           href="index.php?action=myFavorites">My Favorites</a>
-    </li>
-</ul>
-
-<div class="row mb-5 g-3">
-    <div class="col-md-4">
-        <form action="index.php" method="GET" class="d-flex gap-2">
-            <input type="hidden" name="action" value="filterByCategory">
-            <select name="id" class="form-select border-gold-focus" onchange="this.form.submit()">
-                <option value="">All Categories</option>
-                <?php foreach ($categories as $cat): ?>
-                    <option value="<?= $cat['id'] ?>" <?= (isset($_GET['id']) && $_GET['id'] == $cat['id']) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($cat['name']) ?>
-                    </option>
+<div class="row">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 mb-4">
+            <h5 class="brand-font mb-4 px-3">Collections</h5>
+            <div class="list-group list-group-flush">
+                <a href="index.php?action=recipes" class="collection-item rounded <?= !isset($_GET['id']) ? 'active' : '' ?>">
+                    <span>All Recipes</span>
+                    <span class="badge bg-light text-dark rounded-pill"><?= count($recipes) ?></span>
+                </a>
+                <?php foreach($categories as $cat): ?>
+                <a href="index.php?action=filterByCategory&id=<?= $cat['id'] ?>" class="collection-item rounded">
+                    <?= $cat['name'] ?>
+                </a>
                 <?php endforeach; ?>
-            </select>
-        </form>
-    </div>
-
-    <div class="col-md-8">
-        <form action="index.php" method="GET" class="d-flex gap-2">
-            <input type="hidden" name="action" value="search">
-            <input type="text" name="query" class="form-control border-gold-focus" 
-                   placeholder="Search by title or ingredients..." 
-                   value="<?= isset($_GET['query']) ? htmlspecialchars($_GET['query']) : '' ?>">
-            <button type="submit" class="btn btn-dark">Search</button>
-        </form>
-    </div>
-</div>
-
-<div class="row g-4">
-    <?php if (!empty($recipes)): ?>
-        <?php foreach ($recipes as $recipe): ?>
-            <div class="col-md-4">
-                <div class="card h-100 recipe-card p-3 shadow-sm border-0">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-gold small fw-bold text-uppercase">
-                            <?= htmlspecialchars($recipe['category_name'] ?? 'Cuisine') ?>
-                        </span>
-                        <?php if(isset($recipe['username'])): ?>
-                            <span class="text-muted small">by <?= htmlspecialchars($recipe['username']) ?></span>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <h4 class="brand-font"><?= htmlspecialchars($recipe['title']); ?></h4>
-                    <p class="text-muted small"><?= $recipe['prep_time']; ?> min | <?= $recipe['servings']; ?> pers.</p>
-                    
-                    <div class="mt-auto d-flex gap-2 border-top pt-3">
-                        <a href="index.php?action=showRecipe&id=<?= $recipe['id']; ?>" class="btn btn-sm btn-outline-dark">View</a>
-                        
-                        <?php if (isset($_SESSION['user_id']) && $recipe['user_id'] == $_SESSION['user_id']): ?>
-                            <a href="index.php?action=editRecipe&id=<?= $recipe['id']; ?>" class="btn btn-sm btn-outline-secondary">Edit</a>
-                            <a href="index.php?action=deleteRecipe&id=<?= $recipe['id']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this recipe?');">X</a>
-                        <?php endif; ?>
-                    </div>
-                </div>
             </div>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <div class="col-12 text-center py-5">
-            <p class="text-muted fs-5 italic">No recipes found in this section.</p>
-            <a href="index.php?action=myRecipes" class="btn btn-sm btn-gold">Back to my list</a>
         </div>
-    <?php endif; ?>
+        
+        <div class="p-4 bg-white shadow-sm italic text-muted small border-start border-4 border-warning">
+            "Cuisine is the bridge between history and the senses."
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="d-flex justify-content-between align-items-end mb-5">
+            <div>
+                <h1 class="brand-font display-4 mb-0">Digital Archive</h1>
+                <p class="text-muted text-uppercase small ls-2">Marrakech Food Lovers Edition</p>
+            </div>
+            <a href="index.php?action=createRecipe" class="btn btn-gold px-4">
+                <i class="bi bi-plus-lg me-2"></i> Add Recipe
+            </a>
+        </div>
+
+        <div class="table-responsive bg-white shadow-sm p-4">
+            <table class="table table-hover align-middle">
+                <thead class="text-uppercase small text-muted">
+                    <tr>
+                        <th>Title</th>
+                        <th>Prep Time</th>
+                        <th>Category</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($recipes as $recipe): ?>
+                    <tr>
+                        <td>
+                            <div class="fw-bold"><?= $recipe['title'] ?></div>
+                            <div class="small text-muted">Published on <?= date('M d, Y', strtotime($recipe['created_at'])) ?></div>
+                        </td>
+                        <td><?= $recipe['prep_time'] ?> min</td>
+                        <td><span class="badge-category"><?= $recipe['category_name'] ?></span></td>
+                        <td class="text-end">
+                            <div class="dropdown">
+                                <button class="btn btn-link text-dark p-0" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm">
+                                    <li><a class="dropdown-item" href="index.php?action=showRecipe&id=<?= $recipe['id'] ?>"><i class="bi bi-eye me-2"></i> Show</a></li>
+                                    <li><a class="dropdown-item" href="index.php?action=editRecipe&id=<?= $recipe['id'] ?>"><i class="bi bi-pencil me-2"></i> Edit</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="index.php?action=deleteRecipe&id=<?= $recipe['id'] ?>" onclick="return confirm('Archive this recipe?')"><i class="bi bi-trash me-2"></i> Delete</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-<?php require_once __DIR__ . '/../layout/footer.php'; ?>
+<?php include __DIR__ . '/../layout/footer.php'; ?>
