@@ -8,8 +8,7 @@
             <div class="alert-error"><?= $error ?></div>
         <?php endif; ?>
 
-        <form action="index.php?action=update&id=<?= $recipe['id'] ?>" method="POST">
-            
+<form action="index.php?action=updateRecipe&id=<?= $recipe['id'] ?>" method="POST">            
             <div class="form-group mb-3">
                 <label for="title" class="text-light">Titre de la recette</label>
                 <input type="text" name="title" id="title" class="custom-input w-100" 
@@ -38,11 +37,24 @@
                 <label for="instructions" class="text-light">Instructions de préparation</label>
                 <textarea name="instructions" id="instructions" class="custom-input w-100" rows="5" required><?= htmlspecialchars($recipe['instructions']) ?></textarea>
             </div>
+            <div class="form-group mb-3">
+    <label for="category_id" class="text-light">Catégorie</label>
+    <select name="category_id" id="category_id" class="custom-input w-100" required>
+        <option value="">-- Choisir une catégorie --</option>
+        <?php foreach ($categories as $category): ?>
+            <option value="<?= $category['id']; ?>" 
+                <?= ($category['id'] == $recipe['category_id']) ? 'selected' : ''; ?>>
+                <?= htmlspecialchars($category['name']); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</div>
 
-            <div class="actions-group">
-                <button type="submit" class="btn-gold w-100">ENREGISTRER LES MODIFICATIONS</button>
-                <a href="index.php?action=show&id=<?= $recipe['id'] ?>" class="btn-cancel d-block text-center mt-3">Annuler</a>
-            </div>
+           <div class="actions-group">
+           <button type="submit" class="btn-gold w-100">ENREGISTRER LES MODIFICATIONS</button>
+        
+           <a href="index.php?action=recipes" class="btn-cancel d-block text-center mt-3">Annuler</a>   
+          </div>
 
         </form>
     </div>

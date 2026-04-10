@@ -2,7 +2,7 @@
 
 <div class="recipe-detail">
     <div class="auth-card">
-        <a href="index.php" class="text-gold small text-decoration-none">← Retour aux recettes</a>
+        <a href="index.php?action=recipes" class="text-gold small text-decoration-none">← Retour aux recettes</a>
         
         <h1 class="brand-gold mt-3"><?= htmlspecialchars($recipe['title']) ?></h1>
         
@@ -27,20 +27,6 @@
             </div>
         </div>
 
-        <hr class="separator my-4">
 
-        <?php if (isset($_SESSION['user_id']) && $recipe['user_id'] == $_SESSION['user_id']): ?>
-            <div class="recipe-actions d-flex gap-2">
-                <a href="index.php?action=edit&id=<?= $recipe['id'] ?>" class="btn-edit">Modifier la recette</a>
-                
-                <a href="index.php?action=delete&id=<?= $recipe['id'] ?>" 
-                   class="btn-delete" 
-                   onclick="return confirm('Es-tu sûr de vouloir supprimer cette recette ?');">
-                   Supprimer
-                </a>
-            </div>
-        <?php endif; ?>
-    </div>
-</div>
 
 <?php require_once __DIR__ . '/../layout/footer.php'; ?>
