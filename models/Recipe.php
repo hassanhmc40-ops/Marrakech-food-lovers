@@ -138,5 +138,77 @@ class Recipe {
         $stmt->bindParam(":id", $id);
         return $stmt->execute();
     }
+
+    // Search for recipes by title or ingredients.
+    public function searchRecipes($term) {
+        $searchTerm = "%" . htmlspecialchars($term) . "%";
+        
+        $query = "SELECT r.*, c.name as category_name, u.username 
+                  FROM " . $this->table . " r
+                  LEFT JOIN categories c ON r.category_id = c.id
+                  LEFT JOIN users u ON r.user_id = u.id
+                  WHERE r.title LIKE :term OR r.ingredients LIKE :term
+                  ORDER BY r.created_at DESC";
+                  
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":term", $searchTerm);
+        $stmt->execute();
+        
+        return $stmt->fetchAll();
+    }
+
+    // Add a recipe to user's favorites with validation to prevent duplicates.
+    public function addFavorite($user_id, $recipe_id) {
+        // Check if already in favorites
+        $query = "SELECT COUNT(*) FROM favorites WHERE user_id = :u AND recipe_id = :r";
+        $checkStmt = $this->conn->prepare($query);
+        $checkStmt->execute([':u' => $user_id, ':r' => $recipe_id]);
+
+        if ($checkStmt->fetchColumn() == 0) {
+            // Insert only if not found
+            $query = "INSERT INTO favorites (user_id, recipe_id) VALUES (:u, :r)";
+            $stmt = $this->conn->prepare($query);
+            return $stmt->execute([':u' => $user_id, ':r' => $recipe_id]);
+        }
+        return false; 
+    }
+
+    // Remove a recipe from user's favorites.
+    public function removeFavorite($user_id, $recipe_id) {
+        $query = "DELETE FROM favorites WHERE user_id = :u AND recipe_id = :r";
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute([':u' => $user_id, ':r' => $recipe_id]);
+    }
+
+    /**
+     * Get all recipes favorited by a specific user.
+     * Useful for the "My Favorites" page.
+     */
+    public function getUserFavorites($user_id) {
+        $query = "SELECT r.*, c.name as category_name, u.username 
+                  FROM favorites f
+                  JOIN recipes r ON f.recipe_id = r.id
+                  LEFT JOIN categories c ON r.category_id = c.id
+                  LEFT JOIN users u ON r.user_id = u.id
+                  WHERE f.user_id = :user_id
+                  ORDER BY f.created_at DESC";
+                  
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":user_id", $user_id);
+        $stmt->execute();
+        
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Check if a specific recipe is favorited by a user.
+     * Used to toggle the heart icon color in the view.
+     */
+    public function isFavorite($user_id, $recipe_id) {
+        $query = "SELECT COUNT(*) FROM favorites WHERE user_id = :u AND recipe_id = :r";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([':u' => $user_id, ':r' => $recipe_id]);
+        return $stmt->fetchColumn() > 0;
+    }
     
 }

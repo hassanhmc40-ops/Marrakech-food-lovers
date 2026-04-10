@@ -11,88 +11,85 @@ $id = $_GET['id'] ?? null;
 
 $public_actions = ['login', 'register', 'auth_login', 'auth_register'];
 
+// Authentication Guard
 if (!isset($_SESSION['user_id']) && !in_array($action, $public_actions)) {
-    // Si pas connecté et action non publique -> Direction Login
     $authController = new AuthController();
     $authController->showLogin();
     exit();
 }
+
 if (isset($_SESSION['user_id']) && $action === 'login') {
     header('Location: index.php?action=recipes');
     exit();
 }
 
 switch ($action) {
-
+    // --- AUTHENTICATION ---
     case 'login':
         $controller = new AuthController();
-        // Si on arrive en GET (lien), on affiche. Si on arrive en POST, on traite.
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->login();
-        } else {
-            $controller->showLogin();
-        }
+        ($_SERVER['REQUEST_METHOD'] === 'POST') ? $controller->login() : $controller->showLogin();
         break;
 
     case 'register':
         $controller = new AuthController();
-        // C'EST ICI : Si c'est juste un clic sur le lien, on affiche le formulaire
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->register();
-        } else {
-            $controller->showRegister();
-        }
+        ($_SERVER['REQUEST_METHOD'] === 'POST') ? $controller->register() : $controller->showRegister();
         break;
 
     case 'logout':
-        $controller = new AuthController();
-        $controller->logout();
+        (new AuthController())->logout();
         break;
 
+    // --- RECIPE MANAGEMENT ---
     case 'recipes':
+    case 'myRecipes': // Added to handle the first tab
         $controller = new RecipeController();
         $controller->index();
         break;
 
-    case 'createRecipe':
+    case 'myFavorites': // Added for the Favorites tab
         $controller = new RecipeController();
-        $controller->create();
+        $controller->showFavorites(); // You need to create this method in RecipeController
+        break;
+
+    case 'search': // Added for the search bar
+        $controller = new RecipeController();
+        $controller->search(); // You need to create this method in RecipeController
+        break;
+
+    case 'createRecipe':
+        (new RecipeController())->create();
         break;
 
     case 'storeRecipe':
-        $controller = new RecipeController();
-        $controller->store();
+        (new RecipeController())->store();
         break;
+
     case 'showRecipe':
-    $controller = new RecipeController();
-    $controller->show($id); 
-    break;
+        (new RecipeController())->show($id); 
+        break;
 
     case 'editRecipe':
-        $controller = new RecipeController();
-        $controller->edit($id);
+        (new RecipeController())->edit($id);
         break;
 
     case 'updateRecipe':
-        $controller = new RecipeController();
-        $controller->update($id);
+        (new RecipeController())->update($id);
         break;
 
     case 'deleteRecipe':
-        $controller = new RecipeController();
-        $controller->delete($id);
+        (new RecipeController())->delete($id);
         break;
 
+    // --- CATEGORIES & EXPLORE ---
     case 'filterByCategory':
-        $controller = new CategoryController();
-        $controller->filterByCategory($id);
+        (new CategoryController())->filterByCategory($id);
         break;
 
     case 'explore':
-    $controller = new RecipeController(); 
-    $controller->explore();
-    break;
+        (new RecipeController())->explore();
+        break;
 
     default:
+        http_response_code(440);
         echo "Page not found.";
 }

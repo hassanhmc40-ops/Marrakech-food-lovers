@@ -161,4 +161,26 @@ class RecipeController {
 
     include __DIR__ . '/../views/recipes/explore.php';
 }
+// Handle the search logic
+public function search() {
+    $query = $_GET['query'] ?? '';
+    $recipeModel = new Recipe();
+    $categoryModel = new Category();
+    
+    $recipes = $recipeModel->searchRecipes($query);
+    $categories = $categoryModel->getAllCategories();
+    
+    include __DIR__ . '/../views/recipes/index.php';
+}
+
+// Show the user's favorite recipes
+public function showFavorites() {
+    $recipeModel = new Recipe();
+    $categoryModel = new Category();
+    
+    $recipes = $recipeModel->getUserFavorites($_SESSION['user_id']);
+    $categories = $categoryModel->getAllCategories();
+    
+    include __DIR__ . '/../views/recipes/index.php';
+}
 }
