@@ -11,13 +11,12 @@ class RecipeController {
 
     
     public function index() {
-        $recipes = $this->recipeModel->getAllRecipes();
-
-        $categoryModel = new Category();
-        $categories = $categoryModel->getAllCategories();
-
-        include __DIR__ . '/../views/recipes/index.php';
-    }
+    // Affiche uniquement les recettes de l'utilisateur connecté
+    $recipes = $this->recipeModel->getRecipesByUser($_SESSION['user_id']);
+    $categoryModel = new Category();
+    $categories = $categoryModel->getAllCategories();
+    include __DIR__ . '/../views/recipes/index.php';
+}
 
     public function create() {
         $categoryModel = new Category();

@@ -1,46 +1,39 @@
 <?php require_once __DIR__ . '/../layout/header.php'; ?>
 
-<div class="text-center mb-5">
-    <h6 class="text-gold fw-bold mb-2">COMMUNAUTÉ</h6>
-    <h1 class="brand-font display-4">LE MUR DES SAVEURS</h1>
-    <div class="bg-gold mx-auto" style="width: 60px; height: 2px;"></div>
+<div class="mb-5 text-center">
+    <h1 class="brand-font display-4">Explore Community Recipes</h1>
+    <p class="text-muted">Discover authentic flavors from other food lovers</p>
 </div>
-<div class="row mb-5 justify-content-center">
-    <div class="col-md-6 text-center">
-        <form action="index.php" method="GET" class="d-flex gap-2 justify-content-center">
-            <input type="hidden" name="action" value="filterByCategory">
-            
-            <select name="id" class="form-select shadow-none border-gold-focus" style="max-width: 300px; border-radius: 0;">
-                <option value="">Toutes les catégories</option>
-                <?php foreach ($categories as $cat): ?>
-                    <option value="<?= $cat['id'] ?>" <?= (isset($_GET['id']) && $_GET['id'] == $cat['id']) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($cat['name']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-            
-            <button type="submit" class="btn btn-gold px-4">FILTRER</button>
-        </form>
-    </div>
-</div>
+
 <div class="row g-4">
-    <?php foreach ($recipes as $recipe): ?>
-    <div class="col-md-4">
-        <div class="card h-100 recipe-card p-4">
-            <div class="d-flex justify-content-between mb-3">
-                <span class="badge bg-light text-gold border"><?= htmlspecialchars($recipe['category_name']) ?></span>
-                <span class="small text-muted italic">Par <?= htmlspecialchars($recipe['username'] ?? 'Chef Anonyme') ?></span>
+    <?php if (!empty($recipes)): ?>
+        <?php foreach ($recipes as $recipe): ?>
+            <div class="col-md-4">
+                <div class="card h-100 recipe-card p-3 shadow-sm border-0">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-gold small fw-bold text-uppercase">
+                            <?= htmlspecialchars($recipe['category_name'] ?? 'Cuisine') ?>
+                        </span>
+                        <span class="badge bg-light text-dark">
+                            By <?= htmlspecialchars($recipe['username']) ?>
+                        </span>
+                    </div>
+                    
+                    <h4 class="brand-font"><?= htmlspecialchars($recipe['title']); ?></h4>
+                    <p class="text-muted small"><?= $recipe['prep_time']; ?> min | <?= $recipe['servings']; ?> pers.</p>
+                    
+                    <div class="mt-auto d-flex gap-2 border-top pt-3">
+                        <a href="index.php?action=showRecipe&id=<?= $recipe['id']; ?>" class="btn btn-sm btn-dark w-100">View Recipe</a>
+                        <button class="btn btn-sm btn-outline-danger">❤️</button>
+                    </div>
+                </div>
             </div>
-            
-            <h4 class="brand-font mb-3"><?= htmlspecialchars($recipe['title']) ?></h4>
-            <p class="text-muted small mb-4"><?= substr(htmlspecialchars($recipe['ingredients']), 0, 70) ?>...</p>
-            
-            <div class="mt-auto pt-3 border-top">
-                <a href="index.php?action=showRecipe&id=<?= $recipe['id'] ?>" class="btn btn-link text-dark p-0 fw-bold small text-decoration-none border-bottom border-dark">DÉCOUVRIR LA RECETTE</a>
-            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <div class="col-12 text-center py-5">
+            <p class="text-muted fs-5 italic">No community recipes available yet.</p>
         </div>
-    </div>
-    <?php endforeach; ?>
+    <?php endif; ?>
 </div>
 
 <?php require_once __DIR__ . '/../layout/footer.php'; ?>
