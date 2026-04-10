@@ -182,4 +182,18 @@ public function showFavorites() {
     
     include __DIR__ . '/../views/recipes/index.php';
 }
+public function toggleFavorite($recipe_id) {
+    if (session_status() === PHP_SESSION_NONE) { session_start(); }
+    
+    $user_id = $_SESSION['user_id'];
+    
+    $success = $this->recipeModel->toggleFavorite($user_id, $recipe_id);
+
+    if ($success) {
+        header('Location: ' . $_SERVER['HTTP_REFERER']);
+    } else {
+        header('Location: index.php?action=explore&error=fav_failed');
+    }
+    exit();
+}
 }
