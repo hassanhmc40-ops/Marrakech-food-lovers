@@ -152,4 +152,13 @@ class RecipeController {
         }
         exit();
     }
+    public function explore() {
+    $current_user_id = $_SESSION['user_id']; 
+    $recipes = $this->recipeModel->getOthersRecipes($current_user_id); 
+    
+    $categoryModel = new Category();
+    $categories = $categoryModel->getAllCategories();
+
+    include __DIR__ . '/../views/recipes/explore.php';
+}
 }

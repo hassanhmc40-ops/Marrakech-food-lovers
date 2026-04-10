@@ -15,20 +15,20 @@
             <span class="brand-gold">MARRAKECH</span> FOOD LOVERS
         </a>
         
-        <nav class="nav-menu">
-            <ul class="nav-list">
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <li><a href="index.php?action=recipes" class="nav-link">Accueil</a></li>
-                    <li class="user-controls">
-                        <span class="welcome-text">
-                            Bienvenue, <strong><?= htmlspecialchars($_SESSION['username']) ?></strong>
-                        </span>
-                        <a href="index.php?action=logout" class="btn-logout">Déconnexion</a>
-                    </li>
-                <?php endif; ?>
-            </ul>
-        </nav>
-    </div>
+        <nav class="d-flex align-items-center">
+    <?php if (isset($_SESSION['user_id'])): ?>
+        <a href="index.php?action=explore" class="nav-link px-3 fw-bold text-gold small text-uppercase">Explorer</a>
+        
+        <a href="index.php?action=recipes" class="nav-link px-3 fw-light text-uppercase small">Mes Recettes</a>
+        
+        <div class="ms-3 border-start ps-3">
+            <strong class="small text-uppercase"><?= htmlspecialchars($_SESSION['username']) ?></strong>
+            <a href="index.php?action=logout" class="ms-2 text-danger small fw-bold text-decoration-none">DECONNEXION</a>
+        </div>
+    
+        <?php endif; ?>
+</nav>
 </header>
 
 <main class="content-container">
+

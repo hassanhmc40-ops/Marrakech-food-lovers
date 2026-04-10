@@ -63,22 +63,12 @@ class AuthController {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
 
-<<<<<<< HEAD
             header('Location: index.php?action=recipes');
             exit(); 
         } else {
             $error = "Email ou mot de passe incorrect.";
             include __DIR__ . '/../views/auth/login.php';
         }
-=======
-                header('Location: index.php?action=recipes');
-                exit();
-            } else {
-                $error = "Email ou mot de passe incorrect.";
-                // CORRECTION DU CHEMIN ICI : Ajout de __DIR__
-                include __DIR__ . '/../views/auth/login.php';
-            }
->>>>>>> 69700471e24f7c03cf384ffb4234ee44a8e6bbf5
         }  
     }
 
