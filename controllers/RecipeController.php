@@ -173,14 +173,19 @@ public function search() {
 }
 
 // Show the user's favorite recipes
+// Show the user's favorite recipes
 public function showFavorites() {
-    $recipeModel = new Recipe();
+    // On utilise l'instance déjà existante du modèle
     $categoryModel = new Category();
     
-    $recipes = $recipeModel->getUserFavorites($_SESSION['user_id']);
+    // CORRECTION : On nomme la variable $favorites (au pluriel) 
+    // pour qu'elle soit reconnue par le foreach de votre fichier favorite.php
+    $favorites = $this->recipeModel->getUserFavorites($_SESSION['user_id']);
+    
     $categories = $categoryModel->getAllCategories();
     
-    include __DIR__ . '/../views/recipes/index.php';
+    // On charge votre fichier (puisqu'il s'appelle favorite.php)
+    include __DIR__ . '/../views/recipes/favorite.php';
 }
 public function toggleFavorite($recipe_id) {
     if (session_status() === PHP_SESSION_NONE) { session_start(); }
@@ -196,4 +201,19 @@ public function toggleFavorite($recipe_id) {
     }
     exit();
 }
+
+// Logique PHP pour le formatage du temps
+
+public function formatRecipeTime($totalMinutes) {
+
+if ($totalMinutes < 60) return $totalMinutes . ' min';
+
+$hours = floor($totalMinutes / 60);
+
+$minutes = $totalMinutes % 60;
+
+return ($minutes > 0) ? "{$hours}h {$minutes}min" : "{$hours}h";
+
+}
+
 }

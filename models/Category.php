@@ -9,7 +9,6 @@ class Category {
         $this->db = Database::connect();
     }
 
-    // Retrieve all categories sorted alphabetically.
     public function getAllCategories() {
         $query = "SELECT * FROM " . $this->table . " ORDER BY name ASC";
         $stmt = $this->db->prepare($query);
@@ -17,12 +16,12 @@ class Category {
         return $stmt->fetchAll();
     }
 
-    // Retrieve specific category details by its ID.
     public function getCategoryById($id) {
         $query = "SELECT * FROM " . $this->table . " WHERE id = :id";
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+        $stmt->bindParam(":id", $id);
         $stmt->execute();
         return $stmt->fetch();
     }
 }
+?>
